@@ -1,7 +1,7 @@
 library(shiny)
 
 shinyUI(fluidPage( 
-    helpText("Select up to four:"),
+    helpText(" "),
     fluidRow(        
         column(2,
                
@@ -54,7 +54,7 @@ shinyUI(fluidPage(
                
                br(),
                selectInput("theme", "Theme", 
-                           choices = list("ggplot2" = "none",
+                           choices = list("Standard" = "none",
                                           "Light" = "light",
                                           "Economist" = "econ",
                                           "Solarized" = "sol",

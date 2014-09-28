@@ -115,7 +115,7 @@ shinyServer(function(input, output, session) {
     if (input$theme=="light") {
       arrangeGrob(
         p + theme_light() + scale_fill_discrete(name = c.title) + scale_colour_discrete(name = c.title),
-        sub=textGrob(a("Source: Standardized World Income Inequality Database v5.0 (Solt 2014).", href="http://myweb.uiowa.edu/fsolt/swiid/swiid.html"), x=0, hjust=-0.1, vjust=0.1, 
+        sub=textGrob("Source: Standardized World Income Inequality Database v5.0 (Solt 2014).", x=0, hjust=-0.1, vjust=0.1, 
                      gp=gpar(fontsize=10)) 
       )      
     } else if (input$theme=="tufte") {
