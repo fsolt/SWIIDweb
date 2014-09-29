@@ -89,6 +89,7 @@ shinyServer(function(input, output, session) {
     s1$variable <- gsub("gini_market", "Gini Index, Market Income", s1$variable)
     s1$variable <- gsub("rel_red", "Relative Redistribution", s1$variable)
     s1$variable <- gsub("abs_red", "Absolute Redistribution", s1$variable)
+    s1 <- s1[s1$year >= input$dates[1] & s1$year <= input$dates[2], ]
     
     # Modify ylabel and legend title to reflect selected countries and series
     if (length(table(s1$variable))==1) {
@@ -108,7 +109,7 @@ shinyServer(function(input, output, session) {
       geom_line() +
       geom_ribbon(aes(ymin = value-1.96*value_se, ymax = value+1.96*value_se, 
                       fill=series, linetype=NA), alpha = .25) +
-      scale_x_continuous(limits=c(input$dates[1],input$dates[2])) +
+      coord_cartesian(xlim=c(input$dates[1],input$dates[2])) +
       labs(x = "Year", y = ylabel)
     
     # Apply themes and add source
