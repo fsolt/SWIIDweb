@@ -108,7 +108,7 @@ shinyServer(function(input, output, session) {
       geom_line() +
       geom_ribbon(aes(ymin = value-1.96*value_se, ymax = value+1.96*value_se, 
                       fill=series, linetype=NA), alpha = .25) +
-      coord_cartesian(xlim=c(input$dates[1],input$dates[2])) +
+      scale_x_continuous(limits=c(input$dates[1],input$dates[2])) +
       labs(x = "Year", y = ylabel)
     
     # Apply themes and add source
