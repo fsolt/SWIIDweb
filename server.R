@@ -112,44 +112,52 @@ shinyServer(function(input, output, session) {
       coord_cartesian(xlim=c(input$dates[1],input$dates[2])) +
       labs(x = "Year", y = ylabel)
     
+    note1 <- "Note: Solid lines indicate mean estimates; shaded regions indicate the associated 95% confidence intervals.\nSource: Standardized World Income Inequality Database v5.0 (Solt 2014)."
+    note2 <- "Note: Solid lines indicate mean estimates; shaded regions indicate the associated 95% confidence intervals.\nSource: Standardized World Income Inequality Database v5.0 (Solt 2014)."
+    
+    hjust1 <- 0
+    hjust2 <- 0
+    vjust1 <- .2
+    vjust2 <- .03
+    
     # Apply themes and add source
     if (input$theme=="light") {
       arrangeGrob(
         p + theme_light() + scale_fill_discrete(name = c.title) + scale_colour_discrete(name = c.title),
-        sub=textGrob("Source: Standardized World Income Inequality Database v5.0 (Solt 2014).", x=0, hjust=-0.1, vjust=0.1, 
+        sub=textGrob(note1, x=0, hjust=hjust1, vjust=vjust1, 
                      gp=gpar(fontsize=10)) 
       )      
     } else if (input$theme=="tufte") {
       arrangeGrob(
         p + theme_tufte() + scale_fill_grey(name = c.title) + 
           scale_colour_grey(name = c.title),
-        sub=textGrob("Source: Standardized World Income Inequality Database v5.0 (Solt 2014).", x=0, hjust=-0.1, vjust=0.1, 
+        sub=textGrob(note1, x=0, hjust=hjust1, vjust=vjust1, 
                      gp=gpar(fontsize=10, fontfamily="serif")) 
       )     
     } else if (input$theme=="econ") {
       arrangeGrob(
         p + theme_economist() + scale_fill_economist(name = c.title) + scale_colour_economist(name = c.title),
-        sub=textGrob("Source: Standardized World Income Inequality Database v5.0 (Solt 2014).", x=0, hjust=-0.05, vjust=-1, 
+        sub=textGrob(note2, x=0, hjust=hjust2, vjust=vjust2, 
                      gp=gpar(fontsize=10))
       )     
     } else if (input$theme=="sol") {
       arrangeGrob(
         p + theme_solarized() + scale_fill_solarized("blue", name = c.title) + 
           scale_colour_solarized("blue", name = c.title),
-        sub=textGrob("Source: Standardized World Income Inequality Database v5.0 (Solt 2014).", x=0, hjust=-0.05, vjust=-1, 
+        sub=textGrob(note2, x=0, hjust=hjust2, vjust=vjust2, 
                      gp=gpar(fontsize=10))
       )     
     } else if (input$theme=="stata") {
       arrangeGrob(
         p + theme_stata() + scale_fill_stata(name = c.title) + 
           scale_colour_stata(name = c.title),
-        sub=textGrob("Source: Standardized World Income Inequality Database v5.0 (Solt 2014).", x=0, hjust=-0.05, vjust=-1, 
+        sub=textGrob(note2, x=0, hjust=hjust2, vjust=vjust2, 
                      gp=gpar(fontsize=10))
       )     
     } else {
       arrangeGrob(
         p + scale_fill_discrete(name = c.title) + scale_colour_discrete(name = c.title),
-        sub=textGrob("Source: Standardized World Income Inequality Database v5.0 (Solt 2014).", x=0, hjust=-0.1, vjust=0.1, 
+        sub=textGrob(note1, x=0, hjust=hjust1, vjust=vjust1, 
                      gp=gpar(fontsize=10))      
       ) 
     }
