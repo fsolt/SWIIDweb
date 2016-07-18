@@ -9,21 +9,15 @@ shinyUI(fluidPage(
                
                selectInput("country2", label="Country", "select a country"),
                
-               conditionalPanel(
-                   condition = "input.country2 != 'select a country'",             
-                   selectInput("country3", label="Country", "select a country")
-               ),
+               selectInput("country3", label="Country", "select a country"),
                
-               conditionalPanel(
-                   condition = "input.country3 != 'select a country'",             
-                   selectInput("country4", label="Country", "select a country")
-               ),
+               selectInput("country4", label="Country", "select a country"),
                
                
                br(),
                sliderInput("dates", label="Select Years:",
-                           min = 1960, max = 2013, 
-                           value = c(1975, 2013), format = "####")
+                           min = 1960, max = 2015, 
+                           value = c(1975, 2015), sep = "")
         ),
         
         column(2,
@@ -31,26 +25,17 @@ shinyUI(fluidPage(
                            choices = list("Net Inequality" = "gini_net"), 
                            selected = "gini_net"),
                
-               #            conditionalPanel(
-               #              condition = "input.country2 != 'select a country'",
                selectInput("series2", label="Variable",
                            choices = list("Net Inequality" = "gini_net"), 
                            selected = "gini_net"),
-               #            ),
                
-               conditionalPanel(
-                   condition = "input.country2 != 'select a country'",
-                   selectInput("series3", label="Variable",
-                               choices = list("Net Inequality" = "gini_net"), 
-                               selected = "gini_net")
-               ), 
+               selectInput("series3", label="Variable",
+                           choices = list("Net Inequality" = "gini_net"), 
+                           selected = "gini_net"),
                
-               conditionalPanel(
-                   condition = "input.country3 != 'select a country'",
-                   selectInput("series4", label="Variable",
+               selectInput("series4", label="Variable",
                                choices = list("Net Inequality" = "gini_net"),
-                               selected = "gini_net")
-               ),
+                               selected = "gini_net"),
                
                br(),
                selectInput("theme", "Theme", 

@@ -1,7 +1,8 @@
 library(shiny)
 library(ggplot2)
 library(reshape2)
-library(plyr)
+library(dplyr)
+library(grid)
 library(gridExtra)
 library(ggthemes)
 
@@ -13,10 +14,15 @@ ch2 <- list("Net Inequality" = "gini_net",
             "Market Inequality" = "gini_market")
 ch1 <- list("Net Inequality" = "gini_net")
 
-swiid <- read.csv("SWIIDv5_0summary.csv", as.is=T)
-swiid <- ddply(swiid, .(country), mutate, obs = length(gini_net))
-swiid <- swiid[swiid$obs>1, ]
-cc <- ddply(swiid, .(country), summarize, ch = ifelse(sum(!is.na(rel_red))>0, "ch4", "ch2" ))
+swiid <- read.csv("SWIIDv5_1summary.csv", as.is=T) %>% 
+    group_by(country) %>% 
+    mutate(obs = n()) %>% 
+    ungroup() %>% 
+    filter(obs > 1)
+
+cc <- swiid %>% 
+    group_by(country) %>% 
+    summarize(ch = ifelse(sum(!is.na(rel_red))>0, "ch4", "ch2" ))
 
 shinyServer(function(input, output, session) {
   
@@ -35,7 +41,7 @@ shinyServer(function(input, output, session) {
   
   observe({
     cc1 = cc[cc==input$country1, "ch"]
-    updateSelectInput(session, "series1", choices = get(cc1), selected="gini_net" )    
+    updateSelectInput(session, "series1", choices = ch4, selected="gini_net" )    
   })
   
   observe({
@@ -112,8 +118,8 @@ shinyServer(function(input, output, session) {
       coord_cartesian(xlim=c(input$dates[1],input$dates[2])) +
       labs(x = "Year", y = ylabel)
     
-    note1 <- "Note: Solid lines indicate mean estimates; shaded regions indicate the associated 95% confidence intervals.\nSource: Standardized World Income Inequality Database v5.0 (Solt 2014)."
-    note2 <- "Note: Solid lines indicate mean estimates; shaded regions indicate the associated 95% confidence intervals.\nSource: Standardized World Income Inequality Database v5.0 (Solt 2014)."
+    note1 <- "Note: Solid lines indicate mean estimates; shaded regions indicate the associated 95% confidence intervals.\nSource: Standardized World Income Inequality Database v5.1 (Solt 2016)."
+    note2 <- "Note: Solid lines indicate mean estimates; shaded regions indicate the associated 95% confidence intervals.\nSource: Standardized World Income Inequality Database v5.1 (Solt 2016)."
     
     hjust1 <- 0
     hjust2 <- 0
@@ -171,7 +177,7 @@ shinyServer(function(input, output, session) {
   output$downloadPlot <- downloadHandler(
     filename = function() { paste0('SWIID', '.pdf') },
     content = function(file) {
-      pdf(file, width = 6, height = 4)
+      pdf(file, width = 7, height = 4)
         print(plotInput())
       dev.off()
     })
