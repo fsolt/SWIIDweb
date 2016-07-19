@@ -120,7 +120,6 @@ shinyServer(function(input, output, session) {
             coord_cartesian(xlim=c(input$dates[1],input$dates[2])) +
             labs(x = "Year", 
                  y = ylabel,
-                 #             subtitle=st,
                  caption=note1)
         
         note1 <- "Note: Solid lines indicate mean estimates; shaded regions indicate the associated 95% confidence intervals.\nSource: Standardized World Income Inequality Database v5.1 (Solt 2016)."
@@ -144,6 +143,14 @@ shinyServer(function(input, output, session) {
             p + theme_economist() + 
                 scale_fill_economist(name = c.title) + 
                 scale_colour_economist(name = c.title)
+        } else if (input$theme=="fte") {
+            p + theme_fivethirtyeight() + 
+                scale_fill_fivethirtyeight(name = c.title) + 
+                scale_colour_fivethirtyeight(name = c.title)
+        } else if (input$theme=="few") {
+            p + theme_few() + 
+                scale_fill_few(name = c.title) + 
+                scale_colour_few(name = c.title)
         } else if (input$theme=="sol") {
             p + theme_solarized() + 
                 scale_fill_solarized("blue", name = c.title) + 
