@@ -7,11 +7,11 @@ shinyUI(fluidPage(
                
                selectInput("country1", label="Country", "United States"), 
                
-               selectInput("country2", label="Country", "select a country"),
+               selectInput("country2", label="Country", "select"),
                
-               selectInput("country3", label="Country", "select a country"),
+               selectInput("country3", label="Country", "select"),
                
-               selectInput("country4", label="Country", "select a country"),
+               selectInput("country4", label="Country", "select"),
                
                
                br(),
