@@ -105,13 +105,15 @@ shinyServer(function(input, output, session) {
             s1$series <- s1$country
         } else ylabel <- ""
         if (length(table(s1$country))==1) {
-            c.title <- s1$country[1]
+            c_title <- s1$country[1]
             s1$series <- s1$variable
-        } else c.title <- ""
+        } else c_title <- ""
         if (length(table(s1$variable))>1 & length(table(s1$country))>1) {
             s1$series <- paste(s1$country, s1$variable, sep=", ")
         }
-        
+
+        note1 <- "Note: Solid lines indicate mean estimates; shaded regions indicate the associated 95% confidence intervals.\nSource: Standardized World Income Inequality Database v5.1 (Solt 2016)."
+                
         # Basic plot
         p <- ggplot(s1, aes(x=year, y=value, colour=series)) + 
             geom_line() +
@@ -122,9 +124,7 @@ shinyServer(function(input, output, session) {
                  y = ylabel,
                  caption=note1)
         
-        note1 <- "Note: Solid lines indicate mean estimates; shaded regions indicate the associated 95% confidence intervals.\nSource: Standardized World Income Inequality Database v5.1 (Solt 2016)."
-        note2 <- "Note: Solid lines indicate mean estimates; shaded regions indicate the associated 95% confidence intervals.\nSource: Standardized World Income Inequality Database v5.1 (Solt 2016)."
-        
+
         hjust1 <- 0
         hjust2 <- 0
         vjust1 <- .2
@@ -133,35 +133,43 @@ shinyServer(function(input, output, session) {
         # Apply themes and add source
         if (input$theme=="light") {
             p + theme_light() + 
-                scale_fill_discrete(name = c.title) + 
-                scale_colour_discrete(name = c.title)
+                scale_fill_discrete(name = c_title) + 
+                scale_colour_discrete(name = c_title) +
+                theme(plot.caption = element_text(size = 7))
         } else if (input$theme=="tufte") {
             p + theme_tufte() + 
-                scale_fill_grey(name = c.title) + 
-                scale_colour_grey(name = c.title)
+                scale_fill_grey(name = c_title) + 
+                scale_colour_grey(name = c_title) +
+                theme(plot.caption = element_text(size = 7))
         } else if (input$theme=="econ") {
             p + theme_economist() + 
-                scale_fill_economist(name = c.title) + 
-                scale_colour_economist(name = c.title)
+                scale_fill_economist(name = c_title) + 
+                scale_colour_economist(name = c_title) +
+                theme(plot.caption = element_text(size = 7))
         } else if (input$theme=="fte") {
             p + theme_fivethirtyeight() + 
-                scale_fill_fivethirtyeight(name = c.title) + 
-                scale_colour_fivethirtyeight(name = c.title)
+                scale_fill_fivethirtyeight(name = c_title) + 
+                scale_colour_fivethirtyeight(name = c_title) +
+                theme(plot.caption = element_text(size = 7))
         } else if (input$theme=="few") {
             p + theme_few() + 
-                scale_fill_few(name = c.title) + 
-                scale_colour_few(name = c.title)
+                scale_fill_few(name = c_title) + 
+                scale_colour_few(name = c_title) +
+                theme(plot.caption = element_text(size = 7))
         } else if (input$theme=="sol") {
             p + theme_solarized() + 
-                scale_fill_solarized("blue", name = c.title) + 
-                scale_colour_solarized("blue", name = c.title)
+                scale_fill_solarized("blue", name = c_title) + 
+                scale_colour_solarized("blue", name = c_title) +
+                theme(plot.caption = element_text(size = 7))
         } else if (input$theme=="stata") {
             p + theme_stata() + 
-                scale_fill_stata(name = c.title) + 
-                scale_colour_stata(name = c.title)
+                scale_fill_stata(name = c_title) + 
+                scale_colour_stata(name = c_title) +
+                theme(plot.caption = element_text(size = 7))
         } else {
-            p + scale_fill_discrete(name = c.title) +
-                scale_colour_discrete(name = c.title)
+            p + scale_fill_discrete(name = c_title) +
+                scale_colour_discrete(name = c_title) +
+                theme(plot.caption = element_text(size = 7))
         }
         
     })
