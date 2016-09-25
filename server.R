@@ -124,16 +124,27 @@ shinyServer(function(input, output, session) {
         # Basic plot
         
         tvalue <- abs(qt((1 - input$ci/100)/2, 1000))
+        tvalueFix <- c(abs(qt((1 - 95/100)/2, 1000)),abs(qt((1 - 99/100)/2, 1000))) 
+        
         
         p <- ggplot(s1, aes(x=year, y=value, colour=series)) + 
-            geom_line() +
-            geom_ribbon(aes(ymin = value-tvalue*value_se, ymax = value+tvalue*value_se, 
-                            fill=series, linetype=NA), alpha = .25) +
-            coord_cartesian(xlim=c(input$dates[1],input$dates[2])) +
-            labs(list(x = "Year", y = ylabel)) +
-            ggtitle(note1)
+                    geom_line() +
+                    geom_ribbon(aes(ymin = value-tvalue*value_se, ymax = value+tvalue*value_se, fill=series, linetype=NA), alpha = .25) +
+                    coord_cartesian(xlim=c(input$dates[1],input$dates[2])) +
+                    labs(list(x = "Year", y = ylabel, caption = note1)) 
         
+        # for doulbe CI view (95 + 99)
+       if(input$cilayer){
+         p <- ggplot(s1, aes(x=year, y=value, colour=series)) + 
+                       geom_line() +
+                       geom_ribbon(aes(ymin = value-tvalueFix[2]*value_se, ymax = value+tvalueFix[2]*value_se, fill=series, linetype=NA), alpha = .4) +
+                       geom_ribbon(aes(ymin = value-tvalueFix[1]*value_se, ymax = value+tvalueFix[1]*value_se, fill="grey70", linetype=NA), alpha = .15) +
+                       coord_cartesian(xlim=c(input$dates[1],input$dates[2])) +
+                       labs(list(x = "Year", y = ylabel, plot.caption = note1))
+        } 
+
         
+    
 
         hjust1 <- 0
         hjust2 <- 0
@@ -145,41 +156,41 @@ shinyServer(function(input, output, session) {
             p + theme_light() + 
                 scale_fill_discrete(name = c_title) + 
                 scale_colour_discrete(name = c_title) +
-                theme(plot.title = element_text(size = 7))
+                theme(plot.caption = element_text(size = 7))
         } else if (input$theme=="tufte") {
             p + theme_tufte() + 
                 scale_fill_grey(name = c_title) + 
                 scale_colour_grey(name = c_title) +
-                theme(plot.title = element_text(size = 7))
+                theme(plot.caption = element_text(size = 7))
         } else if (input$theme=="econ") {
             p + theme_economist() + 
                 scale_fill_economist(name = c_title) + 
                 scale_colour_economist(name = c_title) +
-                theme(plot.title = element_text(size = 7))
+                theme(plot.caption = element_text(size = 7))
         } else if (input$theme=="fte") {
             p + theme_fivethirtyeight() + 
                 scale_fill_fivethirtyeight(name = c_title) + 
                 scale_colour_fivethirtyeight(name = c_title) +
-                theme(plot.title = element_text(size = 7))
+                theme(plot.caption = element_text(size = 7))
         } else if (input$theme=="few") {
             p + theme_few() + 
                 scale_fill_few(name = c_title) + 
                 scale_colour_few(name = c_title) +
-                theme(plot.title = element_text(size = 7))
+                theme(plot.caption = element_text(size = 7))
         } else if (input$theme=="sol") {
             p + theme_solarized() + 
                 scale_fill_solarized("blue", name = c_title) + 
                 scale_colour_solarized("blue", name = c_title) +
-                theme(plot.title = element_text(size = 7))
+                theme(plot.caption = element_text(size = 7))
         } else if (input$theme=="stata") {
             p + theme_stata() + 
                 scale_fill_stata(name = c_title) + 
                 scale_colour_stata(name = c_title) +
-                theme(plot.title = element_text(size = 7))
+                theme(plot.caption = element_text(size = 7))
         } else {
             p + scale_fill_discrete(name = c_title) +
                 scale_colour_discrete(name = c_title) +
-                theme(plot.title = element_text(size = 7))
+                theme(plot.caption = element_text(size = 7))
         }
         
     })
