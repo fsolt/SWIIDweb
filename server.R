@@ -28,42 +28,49 @@ shinyServer(function(input, output, session) {
     
     observe({
         updateSelectInput(session, "country1", choices = cc$country, selected = "United States")
-    })
-    observe({
-        updateSelectInput(session, "country2", choices = c("select", cc$country), selected = "select")
-    })
-    observe({
-        updateSelectInput(session, "country3", choices = c("select", cc$country), selected = "select")
-    })
-    observe({
-        updateSelectInput(session, "country4", choices = c("select", cc$country), selected = "select")
-    })
+    }) # reactive program for the 1st country choice.
     
     observe({
         cc1 = as.character(cc[cc==input$country1, "ch"])
-        updateSelectInput(session, "series1", choices = get(cc1), selected="gini_net" )    
-    })
+        updateSelectInput(session, "series1", choices = get(cc1), selected="gini_net" )  
+    }) # first country's data type 
+    
+    observe({
+        updateSelectInput(session, "country2", choices = c("select", cc$country), selected = "select")
+    }) # reactive program for the 2nd country choice.
     
     observe({
         if(input$country2 != "select") {
             cc2 = as.character(cc[cc==input$country2, "ch"])
         } else cc2 <- "ch1"
-        updateSelectInput(session, "series2", choices = get(cc2), selected="gini_net" )    
-    })
+        updateSelectInput(session, "series2", choices = get(cc2), selected="gini_net" )  
+    }) # second country's data type 
+    
+    observe({
+        updateSelectInput(session, "country3", choices = c("select", cc$country), selected = "select")
+    }) # reactive program for the 3rd country choice.
     
     observe({
         if(input$country3 != "select") {
             cc3 = as.character(cc[cc==input$country3, "ch"])
         } else cc3 <- "ch1"
-        updateSelectInput(session, "series3", choices = get(cc3), selected="gini_net" )    
-    })
+        updateSelectInput(session, "series3", choices = get(cc3), selected="gini_net" )  
+    }) # third country's data type 
+    
+    observe({
+        updateSelectInput(session, "country4", choices = c("select", cc$country), selected = "select")
+    }) # reactive program for the 4th country choice.
     
     observe({
         if(input$country4 != "select") {
             cc4 = as.character(cc[cc==input$country4, "ch"])
         } else cc4 <- "ch1"
-        updateSelectInput(session, "series4", choices = get(cc4), selected="gini_net" )    
-    })
+        updateSelectInput(session, "series4", choices = get(cc4), selected="gini_net" )  
+    }) # fourth country's data type 
+    
+    
+    
+    
     
     plotInput <- reactive({
         # Get data for selected countries and series
@@ -112,17 +119,20 @@ shinyServer(function(input, output, session) {
             s1$series <- paste(s1$country, s1$variable, sep=", ")
         }
 
-        note1 <- "Note: Solid lines indicate mean estimates; shaded regions indicate the associated 95% confidence intervals.\nSource: Standardized World Income Inequality Database v5.1 (Solt 2016)."
+        note1 <- "Solid lines indicate mean estimates; shaded regions indicate the associated 95% confidence intervals.\nSource: Standardized World Income Inequality Database v5.1 (Solt 2016)."
                 
         # Basic plot
+        
+        tvalue <- abs(qt((1 - input$ci/100)/2, 1000))
+        
         p <- ggplot(s1, aes(x=year, y=value, colour=series)) + 
             geom_line() +
-            geom_ribbon(aes(ymin = value-1.96*value_se, ymax = value+1.96*value_se, 
+            geom_ribbon(aes(ymin = value-tvalue*value_se, ymax = value+tvalue*value_se, 
                             fill=series, linetype=NA), alpha = .25) +
             coord_cartesian(xlim=c(input$dates[1],input$dates[2])) +
-            labs(x = "Year", 
-                 y = ylabel,
-                 caption=note1)
+            labs(list(x = "Year", y = ylabel)) +
+            ggtitle(note1)
+        
         
 
         hjust1 <- 0
@@ -135,41 +145,41 @@ shinyServer(function(input, output, session) {
             p + theme_light() + 
                 scale_fill_discrete(name = c_title) + 
                 scale_colour_discrete(name = c_title) +
-                theme(plot.caption = element_text(size = 7))
+                theme(plot.title = element_text(size = 7))
         } else if (input$theme=="tufte") {
             p + theme_tufte() + 
                 scale_fill_grey(name = c_title) + 
                 scale_colour_grey(name = c_title) +
-                theme(plot.caption = element_text(size = 7))
+                theme(plot.title = element_text(size = 7))
         } else if (input$theme=="econ") {
             p + theme_economist() + 
                 scale_fill_economist(name = c_title) + 
                 scale_colour_economist(name = c_title) +
-                theme(plot.caption = element_text(size = 7))
+                theme(plot.title = element_text(size = 7))
         } else if (input$theme=="fte") {
             p + theme_fivethirtyeight() + 
                 scale_fill_fivethirtyeight(name = c_title) + 
                 scale_colour_fivethirtyeight(name = c_title) +
-                theme(plot.caption = element_text(size = 7))
+                theme(plot.title = element_text(size = 7))
         } else if (input$theme=="few") {
             p + theme_few() + 
                 scale_fill_few(name = c_title) + 
                 scale_colour_few(name = c_title) +
-                theme(plot.caption = element_text(size = 7))
+                theme(plot.title = element_text(size = 7))
         } else if (input$theme=="sol") {
             p + theme_solarized() + 
                 scale_fill_solarized("blue", name = c_title) + 
                 scale_colour_solarized("blue", name = c_title) +
-                theme(plot.caption = element_text(size = 7))
+                theme(plot.title = element_text(size = 7))
         } else if (input$theme=="stata") {
             p + theme_stata() + 
                 scale_fill_stata(name = c_title) + 
                 scale_colour_stata(name = c_title) +
-                theme(plot.caption = element_text(size = 7))
+                theme(plot.title = element_text(size = 7))
         } else {
             p + scale_fill_discrete(name = c_title) +
                 scale_colour_discrete(name = c_title) +
-                theme(plot.caption = element_text(size = 7))
+                theme(plot.title = element_text(size = 7))
         }
         
     })

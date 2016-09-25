@@ -15,9 +15,9 @@ shinyUI(fluidPage(
                
                
                br(),
-               sliderInput("dates", label="Select Years:",
-                           min = 1960, max = 2015, 
-                           value = c(1975, 2015), sep = "")
+               numericInput("ci", label = "Confidence Interval (%):", value = 95, 
+                            min = 0, max = 100, step = 1)
+               
         ),
         
         column(2,
@@ -53,6 +53,9 @@ shinyUI(fluidPage(
         ),
         
         column(8,
+               sliderInput("dates", label="Select Years:",
+                           min = 1960, max = 2015, 
+                           value = c(1975, 2015), sep = "", width = "90%"),
                plotOutput("plot")
         )
     )
