@@ -207,4 +207,15 @@ shinyServer(function(input, output, session) {
             dev.off()
         })
     
+    output$countryYear <- renderTable({
+        tvalue <- abs(qt((1 - 95/100)/2, 1000))
+        se <- paste0(input$series1, "_se")
+        swiid %>% 
+            filter(country == input$country1, year == as.numeric(input$year)) %>% 
+            select(one_of("country", "year", input$series1, se))  %>% 
+            mutate(CI = paste(c(.[,input$series1] - tvalue * se, .[,input$series1] - tvalue * se), collapse = ", ")) %>% 
+            select(-input$series1, -se)
+        
+    })
+    
 })

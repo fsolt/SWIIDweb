@@ -63,7 +63,13 @@ shinyUI(fluidPage(
                      )
                      
                      ),
-            tabPanel(title = "Single Country-Year Info")
+            tabPanel(title = "Single Country-Year Info",
+                     fluidRow(column(4,selectInput("country1", label="Country", "United States")), 
+                              column(2,selectInput("year", label="Year", "2015")), 
+                              column(3, selectInput("series1", label="Variable", choices = list("Net Inequality" = "gini_net"), selected = "gini_net"))),
+                              
+                     fluidRow(tableOutput("countryYear")))
+                     
         )
     )
 ))
