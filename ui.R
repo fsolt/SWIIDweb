@@ -2,7 +2,7 @@ library(shiny)
 
 shinyUI(fluidPage( 
     helpText(" "),
-    fluidRow(        
+    mainPanel(        
         tabsetPanel(
             tabPanel(title = "Cross-Country Comparison", 
                      column(2,
@@ -63,13 +63,16 @@ shinyUI(fluidPage(
                      )
                      
                      ),
+            
             tabPanel(title = "Single Country-Year Info",
-                     fluidRow(column(4,selectInput("country1", label="Country", "United States")), 
-                              column(2,selectInput("year", label="Year", "2015")), 
-                              column(3, selectInput("series1", label="Variable", choices = list("Net Inequality" = "gini_net"), selected = "gini_net"))),
+                     fluidRow(column(4, offset = 2, selectInput("country", label="Country", "United States")), 
+                              column(2, numericInput("year", label="Year", 2014)), 
+                              column(3, selectInput("series", label="Variable", 
+                                                    choices = list("Net Inequality" = "gini_net"), 
+                                                    selected = "gini_net"))),
                               
-                     fluidRow(tableOutput("countryYear")))
-                     
+                     fluidRow(column(9, offset = 2, tableOutput("countryYear")) )
+                     )
         )
     )
 ))

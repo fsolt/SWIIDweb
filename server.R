@@ -1,4 +1,5 @@
 library(shiny)
+library(datasets)
 library(ggplot2)
 library(reshape2)
 library(dplyr)
@@ -35,6 +36,9 @@ shinyServer(function(input, output, session) {
         updateSelectInput(session, "series1", choices = get(cc1), selected="gini_net" )  
     }) # first country's data type 
     
+    
+    
+    
     observe({
         updateSelectInput(session, "country2", choices = c("select", cc$country), selected = "select")
     }) # reactive program for the 2nd country choice.
@@ -46,16 +50,24 @@ shinyServer(function(input, output, session) {
         updateSelectInput(session, "series2", choices = get(cc2), selected="gini_net" )  
     }) # second country's data type 
     
+    
+    
+    
+    
     observe({
         updateSelectInput(session, "country3", choices = c("select", cc$country), selected = "select")
     }) # reactive program for the 3rd country choice.
-    
+
     observe({
         if(input$country3 != "select") {
             cc3 = as.character(cc[cc==input$country3, "ch"])
         } else cc3 <- "ch1"
         updateSelectInput(session, "series3", choices = get(cc3), selected="gini_net" )  
     }) # third country's data type 
+    
+    
+    
+    
     
     observe({
         updateSelectInput(session, "country4", choices = c("select", cc$country), selected = "select")
@@ -195,6 +207,7 @@ shinyServer(function(input, output, session) {
         
     })
     
+    
     output$plot <- renderPlot({     
         print(plotInput())    
     })
@@ -206,16 +219,33 @@ shinyServer(function(input, output, session) {
             print(plotInput())
             dev.off()
         })
+
     
-    output$countryYear <- renderTable({
+    
+    observe({
+        updateSelectInput(session, "country", choices = cc$country, selected = "United States")
+    }) # reactive program for the 1st country choice.
+    
+    observe({
+        cc1 = as.character(cc[cc==input$country, "ch"])
+        updateSelectInput(session, "series", choices = get(cc1), selected="gini_net" )  
+    }) # first country's data type 
+    
+    customData <- reactive({
         tvalue <- abs(qt((1 - 95/100)/2, 1000))
-        se <- paste0(input$series1, "_se")
-        swiid %>% 
-            filter(country == input$country1, year == as.numeric(input$year)) %>% 
-            select(one_of("country", "year", input$series1, se))  %>% 
-            mutate(CI = paste(c(.[,input$series1] - tvalue * se, .[,input$series1] - tvalue * se), collapse = ", ")) %>% 
-            select(-input$series1, -se)
-        
+        se <- paste0(input$series, "_se")
+        temp_swiid <- swiid %>% 
+            filter(country == input$country, year == as.numeric(input$year)) %>% 
+            select(one_of("country", "year", input$series, se)) 
+        if (nrow(temp_swiid) != 0){
+            temp_swiid$CI <- c(temp_swiid[, input$series] - tvalue * temp_swiid[, se], temp_swiid[, input$series] + tvalue * temp_swiid[, se]) %>% unlist %>% round(digits = 3) %>% paste(collapse = ", ")
+            select(temp_swiid, one_of("country", "year","CI"))
+        }else{
+            paste0("Data for ", input$country, " in ", input$year, " is still in collection. Check it later.")
+        }
     })
+    
+    
+    output$countryYear <- renderTable({customData()})
     
 })
