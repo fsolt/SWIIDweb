@@ -149,8 +149,8 @@ shinyServer(function(input, output, session) {
        if(input$cilayer){
          p <- ggplot(s1, aes(x=year, y=value, colour=series)) + 
                        geom_line() +
-                       geom_ribbon(aes(ymin = value-tvalueFix[2]*value_se, ymax = value+tvalueFix[2]*value_se, fill=series, linetype=NA), alpha = .4) +
-                       geom_ribbon(aes(ymin = value-tvalueFix[1]*value_se, ymax = value+tvalueFix[1]*value_se, linetype=NA), fill="grey70", alpha = .15) +
+                       geom_ribbon(aes(ymin = value-tvalueFix[2]*value_se, ymax = value+tvalueFix[2]*value_se, fill=series, linetype=NA), alpha = .3) +
+                       geom_ribbon(aes(ymin = value-tvalueFix[1]*value_se, ymax = value+tvalueFix[1]*value_se, linetype=NA), fill="grey90", alpha = .5) +
                        coord_cartesian(xlim=c(input$dates[1],input$dates[2])) +
                        labs(list(x = "Year", y = ylabel, plot.caption = note1))
         } 
