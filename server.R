@@ -6,15 +6,15 @@ library(grid)
 library(gridExtra)
 library(ggthemes)
 
-ch4 <- list("Net Inequality" = "gini_net",
-            "Market Inequality" = "gini_market",
+ch4 <- list("Gini, Disposable Income" = "gini_disp",
+            "Gini, Market Income" = "gini_mkt",
             "Relative Redistribution" = "rel_red",
             "Absolute Redistribution" = "abs_red")
-ch2 <- list("Net Inequality" = "gini_net",
-            "Market Inequality" = "gini_market")
-ch1 <- list("Net Inequality" = "gini_net")
+ch2 <- list("Gini, Disposable Income" = "gini_disp",
+            "Gini, Market Income" = "gini_mkt")
+ch1 <- list("Gini, Disposable Income" = "gini_disp")
 
-swiid <- read.csv("SWIIDv5_1summary.csv", as.is=T) %>% 
+swiid <- read.csv("swiid6_0_summary.csv", as.is=T) %>% 
     group_by(country) %>% 
     mutate(obs = n()) %>% 
     ungroup() %>% 
@@ -22,7 +22,7 @@ swiid <- read.csv("SWIIDv5_1summary.csv", as.is=T) %>%
 
 cc <- swiid %>% 
     group_by(country) %>% 
-    summarize(ch = ifelse(sum(!is.na(rel_red))>0, "ch4", "ch2" ))
+    summarize(ch = ifelse(sum(!is.na(rel_red))>0, "ch4", "ch1" ))
 
 shinyServer(function(input, output, session) {
     
@@ -41,28 +41,28 @@ shinyServer(function(input, output, session) {
     
     observe({
         cc1 = as.character(cc[cc==input$country1, "ch"])
-        updateSelectInput(session, "series1", choices = get(cc1), selected="gini_net" )    
+        updateSelectInput(session, "series1", choices = get(cc1), selected="gini_disp" )    
     })
     
     observe({
         if(input$country2 != "select") {
             cc2 = as.character(cc[cc==input$country2, "ch"])
         } else cc2 <- "ch1"
-        updateSelectInput(session, "series2", choices = get(cc2), selected="gini_net" )    
+        updateSelectInput(session, "series2", choices = get(cc2), selected="gini_disp" )    
     })
     
     observe({
         if(input$country3 != "select") {
             cc3 = as.character(cc[cc==input$country3, "ch"])
         } else cc3 <- "ch1"
-        updateSelectInput(session, "series3", choices = get(cc3), selected="gini_net" )    
+        updateSelectInput(session, "series3", choices = get(cc3), selected="gini_disp" )    
     })
     
     observe({
         if(input$country4 != "select") {
             cc4 = as.character(cc[cc==input$country4, "ch"])
         } else cc4 <- "ch1"
-        updateSelectInput(session, "series4", choices = get(cc4), selected="gini_net" )    
+        updateSelectInput(session, "series4", choices = get(cc4), selected="gini_disp" )    
     })
     
     plotInput <- reactive({
@@ -75,26 +75,26 @@ shinyServer(function(input, output, session) {
                                    c("country", "year", input$series2, paste0(input$series2, "_se"))])
             s1 <- merge(s1, s2, all=T)
         }
-            
+        
         if(input$country3 != "select") {
-                s3 <- data.frame(swiid[swiid$country==input$country3, 
-                                       c("country", "year", input$series3, paste0(input$series3, "_se"))])
-                s1 <- merge(s1, s3, all=T)
+            s3 <- data.frame(swiid[swiid$country==input$country3, 
+                                   c("country", "year", input$series3, paste0(input$series3, "_se"))])
+            s1 <- merge(s1, s3, all=T)
         }
-                
+        
         if(input$country4 != "select"){
             s4 <- data.frame(swiid[swiid$country==input$country4, 
                                    c("country", "year", input$series4, paste0(input$series4, "_se"))])
             s1 <- merge(s1, s4, all=T)
         }   
-     
+        
         s1 <- melt(s1, id.vars=c("country", "year"), na.rm=T)
         s2 <- s1[grepl("se", s1$variable), c("country", "year", "value")]
         s1 <- s1[!grepl("se", s1$variable), ]
         s1 <- cbind(s1, s2[, 3])
         names(s1)[5] <- "value_se"
-        s1$variable <- gsub("gini_net", "Gini Index, Net Income", s1$variable)
-        s1$variable <- gsub("gini_market", "Gini Index, Market Income", s1$variable)
+        s1$variable <- gsub("gini_disp", "Gini Index, Disposable Income", s1$variable)
+        s1$variable <- gsub("gini_mkt", "Gini Index, Market Income", s1$variable)
         s1$variable <- gsub("rel_red", "Relative Redistribution", s1$variable)
         s1$variable <- gsub("abs_red", "Absolute Redistribution", s1$variable)
         s1 <- s1[s1$year >= input$dates[1] & s1$year <= input$dates[2], ]
@@ -112,7 +112,7 @@ shinyServer(function(input, output, session) {
             s1$series <- paste(s1$country, s1$variable, sep=", ")
         }
 
-        note1 <- "Note: Solid lines indicate mean estimates; shaded regions indicate the associated 95% confidence intervals.\nSource: Standardized World Income Inequality Database v5.1 (Solt 2016)."
+        note1 <- "Note: Solid lines indicate mean estimates; shaded regions indicate the associated 95% uncertainty intervals.\nSource: Standardized World Income Inequality Database v6.0 (Solt 2016)."
                 
         # Basic plot
         p <- ggplot(s1, aes(x=year, y=value, colour=series)) + 
