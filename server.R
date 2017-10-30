@@ -14,7 +14,7 @@ ch2 <- list("Gini, Disposable Income" = "gini_disp",
             "Gini, Market Income" = "gini_mkt")
 ch1 <- list("Gini, Disposable Income" = "gini_disp")
 
-swiid <- read.csv("swiid6_0_summary.csv", as.is=T) %>% 
+swiid <- read.csv("swiid6_1_summary.csv", as.is=T) %>% 
     group_by(country) %>% 
     mutate(obs = n()) %>% 
     ungroup() %>% 
