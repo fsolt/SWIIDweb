@@ -14,7 +14,7 @@ ch2 <- list("Gini, Disposable Income" = "gini_disp",
             "Gini, Market Income" = "gini_mkt")
 ch1 <- list("Gini, Disposable Income" = "gini_disp")
 
-swiid <- read.csv("swiid6_1_summary.csv", as.is=T) %>% 
+swiid <- read.csv("swiid6_2_summary.csv", as.is=T) %>% 
     group_by(country) %>% 
     mutate(obs = n()) %>% 
     ungroup() %>% 
@@ -112,7 +112,7 @@ shinyServer(function(input, output, session) {
             s1$series <- paste(s1$country, s1$variable, sep=", ")
         }
 
-        note1 <- "Note: Solid lines indicate mean estimates; shaded regions indicate the associated 95% uncertainty intervals.\nSource: Standardized World Income Inequality Database v6.0 (Solt 2016)."
+        note1 <- "Note: Solid lines indicate mean estimates; shaded regions indicate the associated 95% uncertainty intervals.\nSource: Standardized World Income Inequality Database v6.2 (Solt 2016)."
                 
         # Basic plot
         p <- ggplot(s1, aes(x=year, y=value, colour=series)) + 
@@ -165,6 +165,21 @@ shinyServer(function(input, output, session) {
             p + theme_stata() + 
                 scale_fill_stata(name = c_title) + 
                 scale_colour_stata(name = c_title) +
+                theme(plot.caption = element_text(size = 7))
+        } else if (input$theme=="wsj") {
+            p + theme_wsj() + 
+                scale_fill_wsj(name = c_title) + 
+                scale_colour_wsj(name = c_title) +
+                theme(plot.caption = element_text(size = 7))
+        } else if (input$theme=="hc") {
+            p + theme_hc() + 
+                scale_fill_hc(name = c_title) + 
+                scale_colour_hc(name = c_title) +
+                theme(plot.caption = element_text(size = 7))
+        } else if (input$theme=="pander") {
+            p + theme_pander() + 
+                scale_fill_pander(name = c_title) + 
+                scale_colour_pander(name = c_title) +
                 theme(plot.caption = element_text(size = 7))
         } else {
             p + scale_fill_discrete(name = c_title) +
