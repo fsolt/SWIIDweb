@@ -47,11 +47,14 @@ shinyUI(fluidPage(
                            choices = list("Standard" = "none",
                                           "Light" = "light",
                                           "Economist" = "econ",
+                                          "Few" = "few",
                                           "FiveThirtyEight" = "fte",
+                                          "Highcharts" = "hc",
+                                          "Pander" = "pander",
                                           "Solarized" = "sol",
                                           "Stata" = "stata",
                                           "Tufte" = "tufte",
-                                          "Few" = "few"),
+                                          "WSJ" = "wsj"),
                            selected = "none"),
                
                downloadButton('downloadPlot', 'Download PDF')
