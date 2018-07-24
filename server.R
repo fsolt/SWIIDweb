@@ -14,7 +14,7 @@ ch2 <- list("Gini, Disposable Income" = "gini_disp",
             "Gini, Market Income" = "gini_mkt")
 ch1 <- list("Gini, Disposable Income" = "gini_disp")
 
-swiid <- read.csv("swiid6_2_summary.csv", as.is=T) %>% 
+swiid <- read.csv("swiid7_0_summary.csv", as.is=T) %>% 
     group_by(country) %>% 
     mutate(obs = n()) %>% 
     ungroup() %>% 
@@ -112,7 +112,7 @@ shinyServer(function(input, output, session) {
             s1$series <- paste(s1$country, s1$variable, sep=", ")
         }
 
-        note1 <- "Note: Solid lines indicate mean estimates; shaded regions indicate the associated 95% uncertainty intervals.\nSource: Standardized World Income Inequality Database v6.2 (Solt 2016)."
+        note1 <- "Note: Solid lines indicate mean estimates; shaded regions indicate the associated 95% uncertainty intervals.\nSource: Standardized World Income Inequality Database v7.0 (Solt 2016)."
                 
         # Basic plot
         p <- ggplot(s1, aes(x=year, y=value, colour=series)) + 
