@@ -20,9 +20,8 @@ shinyUI(fluidPage(
                
                
                br(),
-               sliderInput("dates", label="Select Years:",
-                           min = 1960, max = 2017, 
-                           value = c(1975, 2017), sep = "")
+               
+               uiOutput("yearControl")
         ),
         
         column(3,

@@ -26,6 +26,19 @@ cc <- swiid %>%
 
 shinyServer(function(input, output, session) {
     
+    output$yearControl <- renderUI({
+        max_year <- swiid %>% 
+            pull(year) %>% 
+            max()
+        sliderInput(inputId = "dates", 
+                    label = "Years",
+                    min = 1960,
+                    max = max(max_year, round(max_year, -1)), 
+                    value = c(1975, max_year),
+                    step = 1,
+                    sep = "")
+    })
+    
     observe({
         updateSelectInput(session, "country1", choices = cc$country, selected = "United States")
     })
