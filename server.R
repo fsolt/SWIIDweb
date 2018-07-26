@@ -14,7 +14,7 @@ ch2 <- list("Gini, Disposable Income" = "gini_disp",
             "Gini, Market Income" = "gini_mkt")
 ch1 <- list("Gini, Disposable Income" = "gini_disp")
 
-swiid <- read.csv("swiid_summary.csv", as.is=T) %>% 
+swiid <- read.csv("swiid_summary.csv", as.is = TRUE) %>% 
     group_by(country) %>% 
     mutate(obs = n()) %>% 
     ungroup() %>% 
@@ -22,7 +22,7 @@ swiid <- read.csv("swiid_summary.csv", as.is=T) %>%
 
 cc <- swiid %>% 
     group_by(country) %>% 
-    summarize(ch = ifelse(sum(!is.na(rel_red))>0, "ch4", "ch1" ))
+    summarize(ch = ifelse(sum(!is.na(rel_red)) > 0, "ch4", "ch2" ))
 
 shinyServer(function(input, output, session) {
     
@@ -113,15 +113,15 @@ shinyServer(function(input, output, session) {
         s1 <- s1[s1$year >= input$dates[1] & s1$year <= input$dates[2], ]
         
         # Modify ylabel and legend title to reflect selected countries and series
-        if (length(table(s1$variable))==1) {
+        if (length(table(s1$variable)) == 1) {
             ylabel <- paste("SWIID", s1$variable[1])
             s1$series <- s1$country
         } else ylabel <- ""
-        if (length(table(s1$country))==1) {
+        if (length(table(s1$country)) == 1) {
             c_title <- s1$country[1]
             s1$series <- s1$variable
         } else c_title <- ""
-        if (length(table(s1$variable))>1 & length(table(s1$country))>1) {
+        if (length(table(s1$variable)) > 1 & length(table(s1$country)) > 1) {
             s1$series <- paste(s1$country, s1$variable, sep=", ")
         }
 
@@ -130,14 +130,16 @@ shinyServer(function(input, output, session) {
         # Basic plot
         p <- ggplot(s1, aes(x=year, y=value, colour=series)) + 
             geom_line() +
-            geom_ribbon(aes(ymin = value-1.96*value_se, ymax = value+1.96*value_se, 
-                            fill=series, linetype=NA), alpha = .25) +
-            coord_cartesian(xlim=c(input$dates[1],input$dates[2])) +
+            geom_ribbon(aes(ymin = value - 1.96*value_se,
+                            ymax = value + 1.96*value_se, 
+                            fill = series, 
+                            linetype = NA),
+                        alpha = .25) +
+            coord_cartesian(xlim=c(input$dates[1], input$dates[2])) +
             labs(x = "Year", 
                  y = ylabel,
-                 caption=note1)
+                 caption = note1)
         
-
         hjust1 <- 0
         hjust2 <- 0
         vjust1 <- .2
