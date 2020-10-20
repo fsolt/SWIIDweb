@@ -5,6 +5,7 @@ library(dplyr)
 library(grid)
 library(gridExtra)
 library(ggthemes)
+library(magrittr)
 
 ch4 <- list("Gini, Disposable Income" = "gini_disp",
             "Gini, Market Income" = "gini_mkt",
@@ -24,7 +25,7 @@ cc <- swiid %>%
     group_by(country) %>% 
     summarize(ch = ifelse(sum(!is.na(rel_red)) > 0, "ch4", "ch2" ))
 
-shinyServer(function(input, output, session) {
+server <- function(input, output, session) {
     
     output$yearControl <- renderUI({
         max_year <- swiid %>% 
@@ -38,44 +39,43 @@ shinyServer(function(input, output, session) {
                     step = 1,
                     sep = "")
     })
-    
+ 
     observe({
         updateSelectInput(session, "country1", choices = cc$country, selected = "United States")
-    })
-    observe({
+
         updateSelectInput(session, "country2", choices = c("select", cc$country), selected = "select")
-    })
-    observe({
+
         updateSelectInput(session, "country3", choices = c("select", cc$country), selected = "select")
-    })
-    observe({
+
         updateSelectInput(session, "country4", choices = c("select", cc$country), selected = "select")
     })
     
     observe({
-        cc1 = as.character(cc[cc==input$country1, "ch"])
-        updateSelectInput(session, "series1", choices = get(cc1), selected="gini_disp" )    
-    })
-    
-    observe({
+        cc1 = cc %>% 
+            filter(country == input$country1) %>%
+            pull(ch)
+        updateSelectInput(session, "series1", choices = get(cc1), selected="gini_disp")
+
         if(input$country2 != "select") {
-            cc2 = as.character(cc[cc==input$country2, "ch"])
+            cc2 = cc %>% 
+                filter(country == input$country2) %>%
+                pull(ch)
         } else cc2 <- "ch1"
-        updateSelectInput(session, "series2", choices = get(cc2), selected="gini_disp" )    
-    })
-    
-    observe({
+        updateSelectInput(session, "series2", choices = get(cc2), selected="gini_disp")
+
         if(input$country3 != "select") {
-            cc3 = as.character(cc[cc==input$country3, "ch"])
+            cc3 = cc %>% 
+                filter(country == input$country3) %>%
+                pull(ch)
         } else cc3 <- "ch1"
-        updateSelectInput(session, "series3", choices = get(cc3), selected="gini_disp" )    
-    })
-    
-    observe({
+        updateSelectInput(session, "series3", choices = get(cc3), selected="gini_disp")
+
         if(input$country4 != "select") {
-            cc4 = as.character(cc[cc==input$country4, "ch"])
+            cc4 = cc %>% 
+                filter(country == input$country4) %>%
+                pull(ch)
         } else cc4 <- "ch1"
-        updateSelectInput(session, "series4", choices = get(cc4), selected="gini_disp" )    
+        updateSelectInput(session, "series4", choices = get(cc4), selected="gini_disp")
     })
     
     plotInput <- reactive({
@@ -124,9 +124,9 @@ shinyServer(function(input, output, session) {
         if (length(table(s1$variable)) > 1 & length(table(s1$country)) > 1) {
             s1$series <- paste(s1$country, s1$variable, sep=", ")
         }
-
+        
         note1 <- "Note: Solid lines indicate mean estimates; shaded regions indicate the associated 95% uncertainty intervals.\nSource: Standardized World Income Inequality Database v9.0 (Solt 2020)."
-                
+        
         # Basic plot
         p <- ggplot(s1, aes(x=year, y=value, colour=series)) + 
             geom_line() +
@@ -216,4 +216,71 @@ shinyServer(function(input, output, session) {
             dev.off()
         })
     
-})
+} 
+       
+ui <- shinyUI(fluidPage( 
+    helpText(" "),
+    tags$head(tags$style(HTML("
+        .selectize-input, .selectize-dropdown {
+                              font-size: 90%;
+                              }
+                              "))),
+    fluidRow(        
+        column(2,
+               
+               selectInput("country1", label="Country", "United States"), 
+               
+               selectInput("country2", label="Country", "select"),
+               
+               selectInput("country3", label="Country", "select"),
+               
+               selectInput("country4", label="Country", "select"),
+               
+               
+               br(),
+               
+               uiOutput("yearControl")
+        ),
+        
+        column(3,
+               selectInput("series1", label="Variable", 
+                           choices = list("Gini, Disposable Income" = "gini_disp"), 
+                           selected = "gini_disp"),
+               
+               selectInput("series2", label="Variable",
+                           choices = list("Gini, Disposable Income" = "gini_disp"), 
+                           selected = "gini_disp"),
+               
+               selectInput("series3", label="Variable",
+                           choices = list("Gini, Disposable Income" = "gini_disp"), 
+                           selected = "gini_disp"),
+               
+               selectInput("series4", label="Variable",
+                           choices = list("Gini, Disposable Income" = "gini_disp"),
+                           selected = "gini_disp"),
+               
+               br(),
+               selectInput("theme", "Theme", 
+                           choices = list("Standard" = "none",
+                                          "Light" = "light",
+                                          "Economist" = "econ",
+                                          "Few" = "few",
+                                          "FiveThirtyEight" = "fte",
+                                          "Highcharts" = "hc",
+                                          "Pander" = "pander",
+                                          "Solarized" = "sol",
+                                          "Stata" = "stata",
+                                          "Tufte" = "tufte",
+                                          "WSJ" = "wsj"),
+                           selected = "none"),
+               
+               downloadButton('downloadPlot', 'Download PDF')
+        ),
+        
+        column(7,
+               plotOutput("plot")
+        )
+    )
+))
+
+shinyApp(ui = ui, server = server)
