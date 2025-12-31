@@ -125,7 +125,7 @@ server <- function(input, output, session) {
             s1$series <- paste(s1$country, s1$variable, sep=", ")
         }
         
-        note1 <- "Note: Solid lines indicate mean estimates; shaded regions indicate the associated 95% uncertainty intervals.\nSource: Standardized World Income Inequality Database v9.8 (Solt 2020)."
+        note1 <- "Note: Solid lines indicate mean estimates; shaded regions indicate the associated 95% uncertainty intervals.\nSource: Standardized World Income Inequality Database v9.91 (Solt 2020)."
         
         # Basic plot
         p <- ggplot(s1, aes(x=year, y=value, colour=series)) + 
@@ -135,7 +135,7 @@ server <- function(input, output, session) {
                             fill = series, 
                             linetype = NA),
                         alpha = .25,
-                        show_guide = FALSE) +
+                        show.legend = FALSE) +
             coord_cartesian(xlim=c(input$dates[1], input$dates[2])) +
             labs(x = "Year", 
                  y = ylabel,
